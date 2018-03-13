@@ -3,6 +3,15 @@ import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import logo from './../logo.svg';
 import LogLifecyle from 'react-log-lifecycle';
+import { connect } from "react-redux";
+// import { addPointReducer } from '../store.js'
+
+const mapStateToProps = state => ({rankings: state});
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateRankings: (json) => dispatch({type: 'UPDATE_RANKINGS', payload: json})
+  };
+};
 
 const flags = {
   // If logType is set to keys then the props of the object being logged
@@ -37,17 +46,20 @@ class Ranking extends Component {
   // }
 
   componentWillMount() {
+    // fai il fetch
+    // quando torni, aggiorna lo stato di redux
     fetch('http://localhost:3001/people/ranking')
       .then(response => response.json())
       .then(json => {
-        this.setState({rankings: json})
+        this.props.updateRankings(json)
+        // this.setState({rankings: json})
       }).catch(what => console.log('what', what))
   }
 
   render() {
     return (
       <List>
-        {this.state.rankings.map(ranking =>
+        {this.props.rankings.map(ranking =>
           <ListItem
             key={ranking.person.id}
             primaryText={ranking.person.name}
@@ -61,4 +73,4 @@ class Ranking extends Component {
   )}
 }
 
-export default Ranking;
+export default connect(mapStateToProps, mapDispatchToProps)(Ranking);
