@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
-import {List, ListItem} from 'material-ui/List';
+import { List, ListItem } from 'material-ui/List';
+// import LogLifecyle from 'react-log-lifecycle';
 import Avatar from 'material-ui/Avatar';
+import { connect } from 'react-redux';
+
 import logo from './../logo.svg';
-import LogLifecyle from 'react-log-lifecycle';
-import { connect } from "react-redux";
 // import { addPointReducer } from '../store.js'
 
-const mapStateToProps = state => ({rankings: state});
+const ENDPOINT = 'http://192.168.1.70:3000';
+
+const mapStateToProps = state => ({ ranking: state.ranking });
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateRankings: (json) => dispatch({type: 'UPDATE_RANKINGS', payload: json})
+    updateRanking: (json) => dispatch({type: 'UPDATE_RANKINGS', payload: json})
   };
 };
 
@@ -24,47 +27,26 @@ const flags = {
 };
 
 class Ranking extends Component {
-  state = {
-    rankings: [
-      {
-        "points_count": 0,
-        "person": {
-          "id": 'fake1',
-          "name": "Nome",
-        }
-      }, {
-        "points_count": 0,
-        "person": {
-          "id": 'fake2',
-          "name": "Nome",
-        }
-      },
-    ]
-  }
-  // constructor(props) {
-    // super(props, flags);
-  // }
-
   componentWillMount() {
     // fai il fetch
     // quando torni, aggiorna lo stato di redux
-    fetch('http://localhost:3001/people/ranking')
+    fetch(`${ENDPOINT}/people/ranking`)
       .then(response => response.json())
-      .then(json => {
-        this.props.updateRankings(json)
-        // this.setState({rankings: json})
-      }).catch(what => console.log('what', what))
+      .then((json) => {
+        this.props.updateRanking(json);
+      })
+      .catch(what => console.log('what', what));
   }
 
   render() {
     return (
       <List>
-        {this.props.rankings.map(ranking =>
+        {this.props.ranking.map(rank =>
           <ListItem
-            key={ranking.person.id}
-            primaryText={ranking.person.name}
+            key={rank.person.id}
+            primaryText={rank.person.name}
             insetChildren={true}
-            leftAvatar={<Avatar>{ranking.points_count}</Avatar>}
+            leftAvatar={<Avatar>{rank.points_count}</Avatar>}
             rightAvatar={<Avatar src={logo} />}
             innerDivStyle={{paddingLeft: '56px'}}
           />
@@ -72,5 +54,7 @@ class Ranking extends Component {
       </List>
   )}
 }
+
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Ranking);

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import './App.css';
-import AppBar from 'material-ui/AppBar';
 import { Route, Switch } from 'react-router-dom';
+import AppBar from 'material-ui/AppBar';
+
+import './App.css';
 
 import Ranking from './components/Ranking';
 import Score from './components/Score';
@@ -15,6 +16,7 @@ class App extends Component {
           title="LaLista"
           showMenuIconButton={false}
         />
+
         <Switch>
           <Route path="/ranking" component={Ranking}/>
           <Route path="/score" component={Score}/>

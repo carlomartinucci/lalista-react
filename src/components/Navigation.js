@@ -1,36 +1,40 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
-import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
+import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import { withRouter } from 'react-router-dom';
 
 import ActionViewList from 'material-ui/svg-icons/action/view-list';
 
 class Navigation extends Component {
-  state = {
-    selectedIndex: 0,
-  };
-
-  select = (index) => this.setState({selectedIndex: index});
-
-  linkTo = (path, index) => {
+  linkTo = (path) => {
     this.props.history.push(path)
-    this.select(index)
+  }
+
+  getSelected = () => {
+    switch (this.props.history.location.pathname) {
+    case '/ranking':
+      return 0
+    case '/score':
+      return 1
+    default:
+      return 0
+    }
   }
 
   render() {
     return (
       <Paper zDepth={1} style={{position: 'fixed', bottom: '0', left: '0', right: '0'}}>
-        <BottomNavigation selectedIndex={this.state.selectedIndex}>
+        <BottomNavigation selectedIndex={this.getSelected()}>
           <BottomNavigationItem
             label="Classifica"
             icon={<ActionViewList />}
-            onClick={() => this.linkTo('/ranking', 0)}
+            onClick={() => this.linkTo('/ranking')}
           />
           <BottomNavigationItem
             label="Segna"
             icon={<ContentAdd />}
-            onClick={() => this.linkTo('/score', 1)}
+            onClick={() => this.linkTo('/score')}
           />
         </BottomNavigation>
       </Paper>
