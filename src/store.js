@@ -12,19 +12,19 @@ const REMOVE_POINT = 'REMOVE_POINT';
 // 5 se la risposta è negativa, torno indietro e mostro un errore
 
 const rankingState = [
-  {
-    points_count: 0,
-    person: {
-      id: 'fake1',
-      name: 'Nome',
-    },
-  }, {
-    points_count: 0,
-    person: {
-      id: 'fake2',
-      name: 'Nome',
-    },
-  },
+  // {
+  //   points_count: 0,
+  //   person: {
+  //     id: 'fake1',
+  //     name: 'Nome',
+  //   },
+  // }, {
+  //   points_count: 0,
+  //   person: {
+  //     id: 'fake2',
+  //     name: 'Nome',
+  //   },
+  // },
 ];
 // questo è il punto 2
 // state : [{points_count, person}]
@@ -55,7 +55,38 @@ const rankingReducer = (state = rankingState, action) => {
 
 const peopleState = [];
 
-const peopleReducer = (state = peopleState) => state;
+const peopleReducer = (state = peopleState, action) => {
+  switch (action.type) {
+    case 'UPDATE_PEOPLE':
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+const wordsState = [];
+
+const wordsReducer = (state = wordsState, action) => {
+  switch (action.type) {
+    case 'UPDATE_WORDS':
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+const snackbarState = { message: '' };
+
+const snackbarReducer = (state = snackbarState, action) => {
+  switch (action.type) {
+    case 'UPDATE_SNACKBAR':
+      return action.payload;
+    case 'CLOSE_SNACKBAR':
+      return { message: '' };
+    default:
+      return state;
+  }
+};
 
 // const uiState = {
 //   personName: null,
@@ -73,9 +104,17 @@ const peopleReducer = (state = peopleState) => state;
 //   }
 // };
 
-const rootReducer = combineReducers({ people: peopleReducer, ranking: rankingReducer });
+const rootReducer = combineReducers({
+  people: peopleReducer,
+  ranking: rankingReducer,
+  words: wordsReducer,
+  snackbar: snackbarReducer,
+});
 
-const store = createStore(rootReducer);
+const store = createStore(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 export default store;
 

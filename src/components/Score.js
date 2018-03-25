@@ -5,34 +5,36 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import { connect } from 'react-redux';
 
-const mapStateToProps = state => {};
+import ENDPOINT from '../endpoint';
+
+const mapStateToProps = state => ({ people: state.people, words: state.words });
 const mapDispatchToProps = (dispatch) => {
   return {
     addPoint: (id) => dispatch({type: 'ADD_POINT', payload: id}),
-    removePoint: (id) => dispatch({type: 'REMOVE_POINT', payload: id})
+    removePoint: (id) => dispatch({type: 'REMOVE_POINT', payload: id}),
+    snackbarMessage: (message) => dispatch({type: 'UPDATE_SNACKBAR', payload: {message}}),
   };
 };
-
-const ENDPOINT = 'http://192.168.1.70:3000';
 
 class Score extends Component {
   state = {
     person: null,
-    wordName: null,
+    word: null,
   }
 
   handleClick = () => {
-    if (!this.state.person || !this.state.wordName) return
+    if (!this.state.person || !this.state.word) return
     const personId = this.state.person.id
     this.props.addPoint(personId)
+    this.props.snackbarMessage(`segnando...`);
 
-    this.setState( {
+    this.setState({
       person: null,
-      wordName: null,
+      word: null,
     })
 
     fetch(`${ENDPOINT}/points`, {
-      body: JSON.stringify({person_id: this.state.person.id, word_id: 660}),
+      body: JSON.stringify({person_id: this.state.person.id, word_id: this.state.word.id}),
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -43,15 +45,18 @@ class Score extends Component {
         if (!response.ok) {
           this.props.removePoint(personId)
           console.log("ERRORE!")
+          this.props.snackbarMessage(`errore, riprova`);
         return
         }
         response.json()
       })
       .then((json) => {
         console.log(json)
+        this.props.snackbarMessage(`segnato`);
       })
       .catch(what => {
         this.props.removePoint(personId)
+        this.props.snackbarMessage(`errore, riprova`);
         console.log('what', what)
       });
   }
@@ -59,9 +64,9 @@ class Score extends Component {
   render() {
     return (
       <React.Fragment>
-        <Paper>
-          <Menu>
-            {[{name: 'Carlo', id: 112}, {name: 'Alberto', id: 109}, {name: 'Daniel', id: 110}].map((person) => (
+        <Paper style={{margin: 30}}>
+          <Menu style={{maxWidth: '100%', width: '100%'}}>
+            {(this.props.people || []).map((person) => (
               <MenuItem
                 checked={this.state.person && this.state.person.id === person.id}
                 key={person.id}
@@ -72,14 +77,14 @@ class Score extends Component {
           </Menu>
         </Paper>
 
-        <Paper>
-          <Menu>
-            {['cazzo', 'merda', 'blu', 'buon', 'buongiorno'].map((wordName) => (
+        <Paper style={{margin: 30}}>
+          <Menu style={{maxWidth: '100%', width: '100%'}}>
+            {(this.props.words || []).map((word) => (
               <MenuItem
-                checked={this.state.wordName === wordName}
-                key={wordName}
-                primaryText={wordName}
-                onClick={() => this.setState({wordName})}
+                checked={this.state.word && this.state.word.id === word.id}
+                key={word.id}
+                primaryText={word.name}
+                onClick={() => this.setState({word})}
               />
             ))}
           </Menu>
@@ -91,4 +96,4 @@ class Score extends Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(Score);
+export default connect(mapStateToProps, mapDispatchToProps)(Score);
