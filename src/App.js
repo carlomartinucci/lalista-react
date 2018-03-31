@@ -1,72 +1,64 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { Route, Switch, withRouter } from 'react-router-dom';
-import AppBar from 'material-ui/AppBar';
+
 import { connect } from 'react-redux';
+
+import AppBar from 'material-ui/AppBar';
 import Snackbar from 'material-ui/Snackbar';
 
-import './App.css';
+// import ENDPOINT from './endpoint';
+import { updateAll } from './actions';
 
+import './App.css';
 import Ranking from './components/Ranking';
 import Score from './components/Score';
 import Navigation from './components/Navigation';
-import ENDPOINT from './endpoint';
+
 
 const mapStateToProps = state => ({ snackbar: state.snackbar });
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateRanking: json => dispatch({ type: 'UPDATE_RANKINGS', payload: json }),
-    updatePeople: json => dispatch({ type: 'UPDATE_PEOPLE', payload: json }),
-    updateWords: json => dispatch({ type: 'UPDATE_WORDS', payload: json }),
+    updateAll: () => dispatch(updateAll()),
     closeSnackbar: () => dispatch({ type: 'CLOSE_SNACKBAR' })
   };
 };
 
 class App extends Component {
-  componentWillMount() {
-    // fai il fetch
-    // quando torni, aggiorna lo stato di redux
-    fetch(`${ENDPOINT}/people/ranking`)
-      .then(response => response.json())
-      .then((json) => {
-        console.log('json', json);
-        this.props.updateRanking(json);
-      })
-      .catch(what => console.log('what', what));
+  static propTypes = {
+    updateAll: PropTypes.func.isRequired,
+    closeSnackbar: PropTypes.func.isRequired,
+    snackbar: PropTypes.any,
+  }
 
-    fetch(`${ENDPOINT}/people`)
-      .then(response => response.json())
-      .then((json) => {
-        console.log('json', json);
-        this.props.updatePeople(json);
-      })
-      .catch(what => console.log('what', what));
-
-    fetch(`${ENDPOINT}/words`)
-      .then(response => response.json())
-      .then((json) => {
-        console.log('json', json);
-        this.props.updateWords(json);
-      })
-      .catch(what => console.log('what', what));
+  componentDidMount() {
+    this.props.updateAll();
   }
 
   render() {
     return (
       <div className="App">
-        <AppBar
-          title="LaLista"
-          showMenuIconButton={false}
-        />
+        <div className="header">
+          <AppBar
+            title="LaLista"
+            showMenuIconButton={false}
+          />
+        </div>
 
-        <Switch>
-          <Route path="/ranking" component={Ranking}/>
-          <Route path="/score" component={Score}/>
-          <Route component={Ranking}/>
-        </Switch>
+        <div className="main">
+          <Switch>
+            <Route path="/ranking" component={Ranking}/>
+            <Route path="/score" component={Score}/>
+            <Route component={Ranking}/>
+          </Switch>
+        </div>
 
-        <Navigation/>
+        <div className="footer">
+          <Navigation />
+        </div>
         <Snackbar
-          open={!!this.props.snackbar.message}
+          open={this.props.snackbar.open}
           message={this.props.snackbar.message}
           autoHideDuration={4000}
           onRequestClose={this.props.closeSnackbar}

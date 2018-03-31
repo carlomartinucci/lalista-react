@@ -12,6 +12,9 @@ import store from './store';
 
 injectTapEventPlugin();
 
+// blue principale: #007bff
+// FONT: boh, rubalo a daniel
+
 ReactDOM.render(
   <MuiThemeProvider>
     <Provider store={store}>

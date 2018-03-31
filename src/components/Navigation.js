@@ -24,7 +24,7 @@ class Navigation extends Component {
 
   render() {
     return (
-      <Paper zDepth={1} style={{position: 'fixed', bottom: '0', left: '0', right: '0'}}>
+      <Paper zDepth={1}>
         <BottomNavigation selectedIndex={this.getSelected()}>
           <BottomNavigationItem
             label="Classifica"

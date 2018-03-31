@@ -5,71 +5,54 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import { connect } from 'react-redux';
 
-import ENDPOINT from '../endpoint';
+import PropTypes from 'prop-types';
 
-const mapStateToProps = state => ({ people: state.people, words: state.words });
-const mapDispatchToProps = (dispatch) => {
+// import ENDPOINT from '../endpoint';
+import { scorePoint } from '../actions';
+
+const mapStateToProps = state => {
   return {
-    addPoint: (id) => dispatch({type: 'ADD_POINT', payload: id}),
-    removePoint: (id) => dispatch({type: 'REMOVE_POINT', payload: id}),
-    snackbarMessage: (message) => dispatch({type: 'UPDATE_SNACKBAR', payload: {message}}),
+    people: state.people || [],
+    words: state.words || []
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    scorePoint: (person, word) => dispatch(scorePoint(person, word)),
   };
 };
 
 class Score extends Component {
+  static propTypes = {
+    people: PropTypes.any.isRequired,
+    words: PropTypes.any.isRequired,
+
+    scorePoint: PropTypes.func.isRequired,
+    // addPoint: PropTypes.func.isRequired,
+    // removePoint: PropTypes.func.isRequired,
+    // snackbarMessage: PropTypes.func.isRequired,
+  }
+
   state = {
     person: null,
     word: null,
   }
 
   handleClick = () => {
-    if (!this.state.person || !this.state.word) return
-    const personId = this.state.person.id
-    this.props.addPoint(personId)
-    this.props.snackbarMessage(`segnando...`);
-
-    this.setState({
-      person: null,
-      word: null,
-    })
-
-    fetch(`${ENDPOINT}/points`, {
-      body: JSON.stringify({person_id: this.state.person.id, word_id: this.state.word.id}),
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-    })
-      .then(response => {
-        console.log(response)
-        if (!response.ok) {
-          this.props.removePoint(personId)
-          console.log("ERRORE!")
-          this.props.snackbarMessage(`errore, riprova`);
-        return
-        }
-        response.json()
-      })
-      .then((json) => {
-        console.log(json)
-        this.props.snackbarMessage(`segnato`);
-      })
-      .catch(what => {
-        this.props.removePoint(personId)
-        this.props.snackbarMessage(`errore, riprova`);
-        console.log('what', what)
-      });
+    this.props.scorePoint(this.state.person, this.state.word)
+    this.setState({ person: null, word: null })
   }
 
   render() {
     return (
       <React.Fragment>
-        <Paper style={{margin: 30}}>
+        <Paper style={{margin: '30px'}}>
           <Menu style={{maxWidth: '100%', width: '100%'}}>
-            {(this.props.people || []).map((person) => (
+            {(this.props.people).map((person) => (
               <MenuItem
-                checked={this.state.person && this.state.person.id === person.id}
                 key={person.id}
+                checked={this.state.person && this.state.person.id === person.id}
                 primaryText={person.name}
                 onClick={() => this.setState({person})}
               />
@@ -77,12 +60,12 @@ class Score extends Component {
           </Menu>
         </Paper>
 
-        <Paper style={{margin: 30}}>
+        <Paper style={{margin: '30px'}}>
           <Menu style={{maxWidth: '100%', width: '100%'}}>
-            {(this.props.words || []).map((word) => (
+            {(this.props.words).map((word) => (
               <MenuItem
-                checked={this.state.word && this.state.word.id === word.id}
                 key={word.id}
+                checked={this.state.word && this.state.word.id === word.id}
                 primaryText={word.name}
                 onClick={() => this.setState({word})}
               />
@@ -90,7 +73,10 @@ class Score extends Component {
           </Menu>
         </Paper>
 
-        <RaisedButton label="Segna" primary onClick={this.handleClick} />
+        <Paper style={{margin: '30px'}}>
+          <RaisedButton label="Segna" primary onClick={this.handleClick} fullWidth />
+        </Paper>
+
       </React.Fragment>
     )
   }

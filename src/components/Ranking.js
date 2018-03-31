@@ -22,7 +22,7 @@ const mapStateToProps = state => ({ ranking: state.ranking });
 class Ranking extends Component {
   render() {
     return (
-      <List>
+      <List style={{padding: 0}}>
         {this.props.ranking.map(rank =>
           <ListItem
             key={rank.person.id}

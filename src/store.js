@@ -1,7 +1,8 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 
-const ADD_POINT = 'ADD_POINT';
-const REMOVE_POINT = 'REMOVE_POINT';
+const SCORE_POINT = 'SCORE_POINT';
+const ROLLBACK_SCORE_POINT = 'ROLLBACK_SCORE_POINT';
 
 // const reducer = (state, action) => state;
 
@@ -28,25 +29,25 @@ const rankingState = [
 ];
 // questo è il punto 2
 // state : [{points_count, person}]
-// action: {type: 'ADD_POINT', payload: {id}}
+// action: {type: 'SCORE_POINT', payload: {person, point}}
 // action: {type: 'UPDATE_RANKINGS', payload: [{rank1}, {rank2}]}
 const rankingReducer = (state = rankingState, action) => {
   switch (action.type) {
-    case ADD_POINT:
+    case SCORE_POINT:
       return state.map((rank) => {
-        if (rank.person.id === action.payload.id) {
-          return { ...rank, points_count: rank.points_count + 1 }
+        if (rank.person.id === action.payload.person.id) {
+          return { ...rank, points_count: rank.points_count + 1 };
         }
         return rank;
       });
-    case REMOVE_POINT:
+    case ROLLBACK_SCORE_POINT:
       return state.map((rank) => {
-        if (rank.person.id === action.payload.id) {
-          return { ...rank, points_count: rank.points_count - 1 }
+        if (rank.person.id === action.payload.person.id) {
+          return { ...rank, points_count: rank.points_count - 1 };
         }
         return rank;
       });
-    case 'UPDATE_RANKINGS':
+    case 'UPDATE_RANKING':
       return action.payload;
     default:
       return state;
@@ -75,14 +76,18 @@ const wordsReducer = (state = wordsState, action) => {
   }
 };
 
-const snackbarState = { message: '' };
+const snackbarState = { message: '', open: false };
 
 const snackbarReducer = (state = snackbarState, action) => {
   switch (action.type) {
-    case 'UPDATE_SNACKBAR':
-      return action.payload;
     case 'CLOSE_SNACKBAR':
-      return { message: '' };
+      return { ...state, open: false };
+    case SCORE_POINT:
+      return { open: true, message: `Ho segnato "${action.payload.word.name}" a ${action.payload.person.name}` };
+    case 'FETCH_FAILED':
+      return { open: true, message: 'Errore di connessione con il server' };
+    case ROLLBACK_SCORE_POINT:
+      return { open: true, message: `Non ho segnato "${action.payload.word.name}" a ${action.payload.person.name}` };
     default:
       return state;
   }
@@ -113,7 +118,8 @@ const rootReducer = combineReducers({
 
 const store = createStore(
   rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+  applyMiddleware(thunk),
 );
 
 export default store;
@@ -151,7 +157,7 @@ export default store;
 //     },
 //   ]
 
-// const action = {type: 'ADD_POINT', payload: {id: 'fake1'}}
+// const action = {type: 'SCORE_POINT', payload: {id: 'fake1'}}
 
 // console.log(rankingsReducer(state, action))
 // console.log(endState)

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "localforage": "^1.7.1",
     "material-ui": "^0.20.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -12,7 +13,9 @@
     "react-scripts": "1.1.1",
     "react-tap-event-plugin": "^3.0.2",
     "redux": "^3.7.2",
-    "reselect": "^3.0.1"
+    "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1",
+    "save": "^2.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
