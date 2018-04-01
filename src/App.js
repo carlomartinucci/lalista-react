@@ -7,6 +7,11 @@ import { connect } from 'react-redux';
 
 import AppBar from 'material-ui/AppBar';
 import Snackbar from 'material-ui/Snackbar';
+// import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
+import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
+
+import logo from './images/logo.png';
 
 // import ENDPOINT from './endpoint';
 import { updateAll } from './actions';
@@ -14,6 +19,7 @@ import { updateAll } from './actions';
 import './App.css';
 import Ranking from './components/Ranking';
 import Score from './components/Score';
+import History from './components/History';
 import Navigation from './components/Navigation';
 
 
@@ -41,8 +47,12 @@ class App extends Component {
       <div className="App">
         <div className="header">
           <AppBar
-            title="LaLista"
-            showMenuIconButton={false}
+            title="LALISTA"
+            iconElementRight={<IconButton><NavigationRefresh /></IconButton>}
+            onRightIconButtonClick={this.props.updateAll}
+            iconStyleLeft={{margin: '0 0 -4px -24px' }}
+            iconElementLeft={<img src={logo} height={64} />}
+            // showMenuIconButton={false}
           />
         </div>
 
@@ -50,6 +60,7 @@ class App extends Component {
           <Switch>
             <Route path="/ranking" component={Ranking}/>
             <Route path="/score" component={Score}/>
+            <Route path="/history" component={History}/>
             <Route component={Ranking}/>
           </Switch>
         </div>
@@ -58,6 +69,7 @@ class App extends Component {
           <Navigation />
         </div>
         <Snackbar
+          style={{bottom: 56}}
           open={this.props.snackbar.open}
           message={this.props.snackbar.message}
           autoHideDuration={4000}

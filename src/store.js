@@ -2,7 +2,8 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
 const SCORE_POINT = 'SCORE_POINT';
-const ROLLBACK_SCORE_POINT = 'ROLLBACK_SCORE_POINT';
+const SCORE_POINT_COMMIT = 'SCORE_POINT_COMMIT';
+const SCORE_POINT_ROLLBACK = 'SCORE_POINT_ROLLBACK';
 
 // const reducer = (state, action) => state;
 
@@ -35,14 +36,14 @@ const rankingReducer = (state = rankingState, action) => {
   switch (action.type) {
     case SCORE_POINT:
       return state.map((rank) => {
-        if (rank.person.id === action.payload.person.id) {
+        if (rank.person.id === action.payload.point.person.id) {
           return { ...rank, points_count: rank.points_count + 1 };
         }
         return rank;
       });
-    case ROLLBACK_SCORE_POINT:
+    case SCORE_POINT_ROLLBACK:
       return state.map((rank) => {
-        if (rank.person.id === action.payload.person.id) {
+        if (rank.person.id === action.payload.point.person.id) {
           return { ...rank, points_count: rank.points_count - 1 };
         }
         return rank;
@@ -76,6 +77,28 @@ const wordsReducer = (state = wordsState, action) => {
   }
 };
 
+const pointsState = [];
+
+const pointsReducer = (state = pointsState, action) => {
+  switch (action.type) {
+    case SCORE_POINT:
+      return [action.payload.point, ...state];
+    case SCORE_POINT_COMMIT:
+      return state.map((point) => {
+        if (point.id === action.payload.oldPoint.id) {
+          return action.payload.point;
+        }
+        return point;
+      });
+    case SCORE_POINT_ROLLBACK:
+      return state.filter(point => point.id !== action.payload.point.id);
+    case 'UPDATE_POINTS':
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 const snackbarState = { message: '', open: false };
 
 const snackbarReducer = (state = snackbarState, action) => {
@@ -83,11 +106,11 @@ const snackbarReducer = (state = snackbarState, action) => {
     case 'CLOSE_SNACKBAR':
       return { ...state, open: false };
     case SCORE_POINT:
-      return { open: true, message: `Ho segnato "${action.payload.word.name}" a ${action.payload.person.name}` };
+      return { open: true, message: `Ho segnato "${action.payload.point.word.name}" a ${action.payload.point.person.name}` };
     case 'FETCH_FAILED':
       return { open: true, message: 'Errore di connessione con il server' };
-    case ROLLBACK_SCORE_POINT:
-      return { open: true, message: `Non ho segnato "${action.payload.word.name}" a ${action.payload.person.name}` };
+    case SCORE_POINT_ROLLBACK:
+      return { open: true, message: `Non ho segnato "${action.payload.point.word.name}" a ${action.payload.point.person.name}` };
     default:
       return state;
   }
@@ -113,6 +136,7 @@ const rootReducer = combineReducers({
   people: peopleReducer,
   ranking: rankingReducer,
   words: wordsReducer,
+  points: pointsReducer,
   snackbar: snackbarReducer,
 });
 

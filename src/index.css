@@ -17,8 +17,13 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 3000;
 }
 
 .main {
   margin: 94px 0 86px;
+}
+
+.invisible {
+  opacity: 0;
 }

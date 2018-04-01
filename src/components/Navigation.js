@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
 import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNavigation';
-import ContentAdd from 'material-ui/svg-icons/content/add';
 import { withRouter } from 'react-router-dom';
 
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import ActionViewList from 'material-ui/svg-icons/action/view-list';
+import ActionHistory from 'material-ui/svg-icons/action/history';
 
 class Navigation extends Component {
   linkTo = (path) => {
@@ -17,6 +18,8 @@ class Navigation extends Component {
       return 0
     case '/score':
       return 1
+    case '/history':
+      return 2
     default:
       return 0
     }
@@ -35,6 +38,11 @@ class Navigation extends Component {
             label="Segna"
             icon={<ContentAdd />}
             onClick={() => this.linkTo('/score')}
+          />
+          <BottomNavigationItem
+            label="Storico"
+            icon={<ActionHistory />}
+            onClick={() => this.linkTo('/history')}
           />
         </BottomNavigation>
       </Paper>

@@ -3,8 +3,9 @@ import { List, ListItem } from 'material-ui/List';
 // import LogLifecyle from 'react-log-lifecycle';
 import Avatar from 'material-ui/Avatar';
 import { connect } from 'react-redux';
+import { transparent } from 'material-ui/styles/colors';
 
-import logo from './../logo.svg';
+import logo from '../images/logo.png';
 // import { addPointReducer } from '../store.js'
 
 const mapStateToProps = state => ({ ranking: state.ranking });
@@ -28,8 +29,8 @@ class Ranking extends Component {
             key={rank.person.id}
             primaryText={rank.person.name}
             insetChildren={true}
-            leftAvatar={<Avatar>{rank.points_count}</Avatar>}
-            rightAvatar={<Avatar src={logo} />}
+            leftAvatar={<Avatar color='#007bff' backgroundColor={transparent}>{rank.points_count}</Avatar>}
+            rightAvatar={<Avatar color='#007bff' backgroundColor={transparent} src={logo} />}
             innerDivStyle={{paddingLeft: '56px'}}
           />
         )}

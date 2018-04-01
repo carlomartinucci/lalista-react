@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import moment from 'moment';
 
 import ENDPOINT from './endpoint';
 
@@ -38,24 +39,39 @@ export const updateAll = () => (dispatch) => {
   dispatch(update('ranking', '/people/ranking'));
   dispatch(update('people', '/people'));
   dispatch(update('words', '/words'));
+  dispatch(update('points', '/points'));
 };
 
 export const scorePoint = (person, word) => async (dispatch) => {
-  dispatch({ type: 'SCORE_POINT', payload: { person, word } });
+  const createdAt = moment();
+  const point = {
+    id: `${person.id}_${word.id}_${createdAt}`,
+    person_id: person.id,
+    word_id: word.id,
+    person,
+    word,
+    created_at: createdAt,
+  };
+  dispatch({ type: 'SCORE_POINT', payload: { point } });
 
   let response;
+  let json;
   try {
     response = await fetch(`${ENDPOINT}/points`, {
       body: JSON.stringify({ person_id: person.id, word_id: word.id }),
       method: 'POST',
       headers: { 'content-type': 'application/json' },
     });
+    json = await response.json();
   } catch (e) {}
 
   if (!response || !response.ok) {
     dispatch({ type: 'FETCH_FAILED' });
-    dispatch({ type: 'ROLLBACK_SCORE_POINT', payload: { person, word } });
+    dispatch({ type: 'SCORE_POINT_ROLLBACK', payload: { point } });
+    return
   }
+
+  dispatch({ type: 'SCORE_POINT_COMMIT', payload: { point: json, oldPoint: point } });
 };
 
   // handleClick = () => {
