@@ -28,10 +28,14 @@ const myTheme = {
   }
 }
 
+const basename = window.location.pathname.includes('lalista-react') ? '/lalista-react' : '/'
+console.log('basename', basename)
+// `${process.env.PUBLIC_URL}/`
+
 ReactDOM.render(
   <MuiThemeProvider muiTheme={getMuiTheme(myTheme)}>
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <App />
       </BrowserRouter>
     </Provider>

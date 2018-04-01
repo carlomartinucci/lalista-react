@@ -51,16 +51,16 @@ class App extends Component {
             iconElementRight={<IconButton><NavigationRefresh /></IconButton>}
             onRightIconButtonClick={this.props.updateAll}
             iconStyleLeft={{margin: '0 0 -4px -24px' }}
-            iconElementLeft={<img src={logo} height={64} />}
+            iconElementLeft={<img src={logo} height={64} alt='logo' />}
             // showMenuIconButton={false}
           />
         </div>
 
         <div className="main">
           <Switch>
-            <Route path="/ranking" component={Ranking}/>
-            <Route path="/score" component={Score}/>
-            <Route path="/history" component={History}/>
+            <Route path={`${process.env.PUBLIC_URL}/ranking`} component={Ranking}/>
+            <Route path={`${process.env.PUBLIC_URL}/score`} component={Score}/>
+            <Route path={`${process.env.PUBLIC_URL}/history`} component={History}/>
             <Route component={Ranking}/>
           </Switch>
         </div>
