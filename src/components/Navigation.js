@@ -14,11 +14,11 @@ class Navigation extends Component {
 
   getSelected = () => {
     switch (this.props.history.location.pathname) {
-    case '/ranking':
+    case `${process.env.PUBLIC_URL}/ranking`:
       return 0
-    case '/score':
+    case `${process.env.PUBLIC_URL}/score`:
       return 1
-    case '/history':
+    case `${process.env.PUBLIC_URL}/history`:
       return 2
     default:
       return 0
@@ -32,17 +32,17 @@ class Navigation extends Component {
           <BottomNavigationItem
             label="Classifica"
             icon={<ActionViewList />}
-            onClick={() => this.linkTo('/ranking')}
+            onClick={() => this.linkTo(`${process.env.PUBLIC_URL}/ranking`)}
           />
           <BottomNavigationItem
             label="Segna"
             icon={<ContentAdd />}
-            onClick={() => this.linkTo('/score')}
+            onClick={() => this.linkTo(`${process.env.PUBLIC_URL}/score`)}
           />
           <BottomNavigationItem
             label="Storico"
             icon={<ActionHistory />}
-            onClick={() => this.linkTo('/history')}
+            onClick={() => this.linkTo(`${process.env.PUBLIC_URL}/history`)}
           />
         </BottomNavigation>
       </Paper>
